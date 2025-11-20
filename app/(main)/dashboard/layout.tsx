@@ -17,25 +17,27 @@ const DashboardLayout = async ({
   const currentUser = await getCurrentUser();
 
   return (
-    <Container className="max-w-screen-3xl">
-      <DashboardNavigation />
+    <div className="min-h-screen bg-background">
+      <Container className="max-w-screen-3xl">
+        <DashboardNavigation />
 
-      <ResizablePanelGroup direction="horizontal" className="min-h-screen">
-        <ResizablePanel defaultSize={19} className="hidden md:block">
-          <Sidebar currentUser={currentUser} />
-        </ResizablePanel>
+        <ResizablePanelGroup direction="horizontal" className="min-h-screen">
+          <ResizablePanel defaultSize={19} className="hidden md:block">
+            <Sidebar currentUser={currentUser} />
+          </ResizablePanel>
 
-        <ResizableHandle withHandle className="hidden md:flex" />
+          <ResizableHandle withHandle className="hidden border-border md:flex" />
 
-        <ResizablePanel defaultSize={81}>
-          <div className="max-h-screen overflow-y-auto">
-            <Container className=" max-w-screen-lg px-5 py-3">
-              {children}
-            </Container>
-          </div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
-    </Container>
+          <ResizablePanel defaultSize={81}>
+            <div className="max-h-screen overflow-y-auto bg-background">
+              <Container className="max-w-screen-lg px-5 py-3">
+                {children}
+              </Container>
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </Container>
+    </div>
   );
 };
 

@@ -5,7 +5,7 @@ import {
   passwordSchema,
 } from "@/lib/validators/password-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Category } from "@prisma/client";
+import { Category, Folder, Tag } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import {
@@ -34,14 +34,21 @@ import { toast } from "sonner";
 import CategoryIcon from "../category-icon";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { DispatchWithoutAction, useReducer } from "react";
+import { TagPicker } from "../tags/tag-picker";
+import { PasswordStrengthIndicator } from "../password-strength-indicator";
+import { PasswordGenerator } from "../password-generator";
 
 interface AddNewPasswoFormProps {
   categories: Category[];
+  folders: Folder[];
+  tags: Tag[];
   toggleIsOpen: React.DispatchWithoutAction;
 }
 
 const AddNewPasswoForm = ({
   categories,
+  folders,
+  tags,
   toggleIsOpen,
 }: AddNewPasswoFormProps) => {
   const [seePassword, toggleSeePassword] = useReducer((state) => !state, false);
@@ -55,6 +62,8 @@ const AddNewPasswoForm = ({
       password: "",
       url: "",
       category: "",
+      folderId: "",
+      tagIds: [],
     },
   });
 
@@ -95,7 +104,7 @@ const AddNewPasswoForm = ({
                     <SelectValue placeholder="Select Categories" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
+                <SelectContent position="popper" sideOffset={5}>
                   {categories.map((category, index) => (
                     <SelectItem
                       disabled={isPending}
@@ -112,6 +121,63 @@ const AddNewPasswoForm = ({
                   ))}
                 </SelectContent>
               </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="folderId"
+          disabled={isPending}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Folder <span className="text-zinc-500">(Optional)</span></FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger disabled={isPending} className="capitalize">
+                    <SelectValue placeholder="Select Folder" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent position="popper" sideOffset={5}>
+                  <SelectItem value="none" className="text-muted-foreground">
+                    No Folder
+                  </SelectItem>
+                  {folders.map((folder) => (
+                    <SelectItem
+                      key={folder.id}
+                      value={folder.id}
+                      className="capitalize"
+                    >
+                      <span
+                        className="mr-3 inline-block h-3 w-3 rounded-full"
+                        style={{ backgroundColor: folder.color || "#3b82f6" }}
+                      />
+                      {folder.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="tagIds"
+          disabled={isPending}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tags <span className="text-zinc-500">(Optional)</span></FormLabel>
+              <FormControl>
+                <TagPicker
+                  availableTags={tags}
+                  selectedTagIds={field.value || []}
+                  onChange={field.onChange}
+                  disabled={isPending}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -188,28 +254,39 @@ const AddNewPasswoForm = ({
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <div className="flex items-center space-x-3">
-                  <Input
-                    type={seePassword ? "text" : "password"}
-                    placeholder="Enter password"
-                    {...field}
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      type={seePassword ? "text" : "password"}
+                      placeholder="Enter password"
+                      {...field}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={toggleSeePassword}
+                    >
+                      {seePassword ? (
+                        <EyeOffIcon className="h-4 w-4 text-zinc-700" />
+                      ) : (
+                        <EyeIcon className="h-4 w-4 text-zinc-700" />
+                      )}
+                    </Button>
+                    <PasswordGenerator
+                      onPasswordGenerated={(pwd) => {
+                        field.onChange(pwd);
+                      }}
+                    />
+                  </div>
+                  <PasswordStrengthIndicator
+                    password={field.value}
+                    showRequirements={true}
                   />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={toggleSeePassword}
-                  >
-                    {seePassword ? (
-                      <EyeOffIcon className="h-4 w-4 text-zinc-700" />
-                    ) : (
-                      <EyeIcon className="h-4 w-4 text-zinc-700" />
-                    )}
-                  </Button>
                 </div>
               </FormControl>
               <FormDescription>
-                Enter the password for the website or service.
+                Enter a strong password for the website or service.
               </FormDescription>
               <FormMessage />
             </FormItem>

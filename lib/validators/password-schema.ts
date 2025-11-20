@@ -18,6 +18,8 @@ export const passwordSchema = z.object({
   ]),
   password: z.string().min(1, { message: "Please enter a password." }),
   category: z.string().min(1, { message: "Please select  a category." }),
+  folderId: z.string().optional(),
+  tagIds: z.array(z.string()).optional(),
   notes: z.string().optional(),
   isFavorite: z.boolean().optional(),
   logoUrl: z.string().optional(),

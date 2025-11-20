@@ -11,38 +11,60 @@ import { getCurrentUser } from "./user-action";
 import { cryptr } from "@/lib/crypto";
 import { createHistoryEntry } from "./password-history-action";
 
-export const getPasswordCollection = async (param: {
-  category: string;
-  search: string;
+export const getPasswordCollection = async (param?: {
+  category?: string;
+  search?: string;
+  folder?: string;
+  tag?: string;
 }) => {
   try {
     const currentUser = await getCurrentUser();
 
-    const passwords = await prisma.password.findMany({
-      where: {
-        AND: [
-          {
-            userId: currentUser?.id,
-          },
-          {
-            category: { slug: param.category },
-          },
-          {
-            websiteName: {
-              contains: param.search,
-            },
-          },
-        ],
-      },
+    const whereClause: Prisma.PasswordWhereInput = {
+      userId: currentUser?.id,
+    };
+
+    if (param?.category) {
+      whereClause.category = { slug: param.category };
+    }
+
+    if (param?.search) {
+      whereClause.OR = [
+        { websiteName: { contains: param.search } },
+        { email: { contains: param.search } },
+        { username: { contains: param.search } },
+      ];
+    }
+
+    if (param?.folder) {
+      whereClause.folderId = param.folder;
+    }
+
+    if (param?.tag) {
+      whereClause.tags = {
+        some: {
+          tagId: param.tag,
+        },
+      };
+    }
+
+    const passwordCollection = await prisma.password.findMany({
+      where: whereClause,
       include: {
         category: true,
+        folder: true,
+        tags: {
+          include: {
+            tag: true,
+          },
+        },
       },
       orderBy: {
-        updatedAt: "desc",
+        createdAt: "desc",
       },
     });
 
-    return passwords;
+    return passwordCollection;
   } catch (error) {
     console.error(error);
     throw new Error("Failed to get password collection");
@@ -58,7 +80,7 @@ export const addNewPassword = async (values: TPasswordSchema) => {
     throw new Error(validation.error.issues.at(0)?.message);
   }
 
-  const { category, email, password, url, websiteName, username } = values;
+  const { category, folderId, tagIds, email, password, url, websiteName, username } = values;
 
   const cryptedPassword = cryptr.encrypt(password);
 
@@ -70,6 +92,7 @@ export const addNewPassword = async (values: TPasswordSchema) => {
         email: email.toLowerCase() || undefined,
         username: username?.toLowerCase() || undefined,
         categoryId: category,
+        folderId: folderId || null,
         userId: currentUser?.id as string,
         url: url.toLowerCase() || undefined,
         notes: values.notes || undefined,
@@ -87,6 +110,16 @@ export const addNewPassword = async (values: TPasswordSchema) => {
       oldUrl: newPassword.url,
       changeType: "CREATED",
     });
+
+    // Assign tags if provided
+    if (tagIds && tagIds.length > 0) {
+      await prisma.passwordTag.createMany({
+        data: tagIds.map((tagId) => ({
+          passwordId: newPassword.id,
+          tagId,
+        })),
+      });
+    }
 
     revalidatePath("/dashboard");
 
@@ -139,7 +172,7 @@ export const editPassword = async (param: {
 }) => {
   const {
     id,
-    values: { category, email, password, url, websiteName, username, notes, isFavorite, logoUrl },
+    values: { category, folderId, tagIds, email, password, url, websiteName, username, notes, isFavorite, logoUrl },
   } = param;
 
   const passwordExists = await getPassword({ id });
@@ -175,8 +208,33 @@ export const editPassword = async (param: {
             id: category,
           },
         },
+        folder: folderId ? {
+          connect: {
+            id: folderId
+          }
+        } : {
+          disconnect: true
+        }
       },
     });
+
+    // Update tags
+    if (tagIds !== undefined) {
+      // Delete all existing tags
+      await prisma.passwordTag.deleteMany({
+        where: { passwordId: id },
+      });
+
+      // Add new tags
+      if (tagIds.length > 0) {
+        await prisma.passwordTag.createMany({
+          data: tagIds.map((tagId) => ({
+            passwordId: id,
+            tagId,
+          })),
+        });
+      }
+    }
 
     revalidatePath("/dashboard");
 

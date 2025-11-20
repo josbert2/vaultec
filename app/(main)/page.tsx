@@ -46,7 +46,7 @@ export default function LandingPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <Link href="/login" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">
+            <Link href="/sign-in" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">
               / LOGIN
             </Link>
             <Button asChild className="group rounded-none border border-zinc-800 bg-transparent px-6 text-white hover:bg-white hover:text-black">
@@ -90,11 +90,7 @@ export default function LandingPage() {
                   <ArrowUpRight className="ml-2 h-5 w-5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="h-14 rounded-none border-zinc-800 bg-transparent px-8 text-white hover:bg-white hover:text-black">
-                <Link href="#">
-                  BOOK A DEMO
-                </Link>
-              </Button>
+             
             </div>
           </div>
         </div>

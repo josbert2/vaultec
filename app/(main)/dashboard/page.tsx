@@ -3,6 +3,8 @@ import {
   getPasswordCollection,
   totalUserPasswordSaved,
 } from "@/actions/password-action";
+import { getFolders } from "@/actions/folder-action";
+import { getTags } from "@/actions/tag-action";
 import AddNewPasswordDialog from "@/components/add-new-password-dialog";
 import Header from "@/components/header";
 import PasswordCollectionCardWithHistory from "@/components/password-collection-card-with-history";
@@ -14,40 +16,46 @@ interface DashboarPageProps {
   searchParams: {
     category?: string;
     search?: string;
+    folder?: string;
+    tag?: string;
   };
 }
 
 const DashboardPage = async ({
-  searchParams: { category, search },
+  searchParams: { category, search, folder, tag },
 }: DashboarPageProps) => {
-  const [passwordsCollection, categories, total] = await Promise.all([
+  const [passwordsCollection, categories, total, folders, tags] = await Promise.all([
     getPasswordCollection({
       category: category as string,
       search: search as string,
+      folder: folder as string,
+      tag: tag as string,
     }),
     getCategories(),
     totalUserPasswordSaved(),
+    getFolders(),
+    getTags(),
   ]);
 
   return (
     <>
       <Header
         title="All Passwords"
-        description="Safety manage and access your passwords."
-        className="mt-5"
+        description="Safely manage and access your passwords."
+        className="mt-6"
       />
 
-      <div className="mb-6 flex items-center space-x-3">
+      <div className="mb-8 flex items-center space-x-3">
         <SearchPassword total={total} />
-        <AddNewPasswordDialog categories={categories} />
+        <AddNewPasswordDialog categories={categories} folders={folders} tags={tags} />
       </div>
 
-      <div className="space-y-2.5">
+      <div className="space-y-3">
         {!passwordsCollection.length ? (
-          <Alert variant="destructive">
-            <Terminal className="h-4 w-4" />
-            <AlertTitle>No Password Found</AlertTitle>
-            <AlertDescription>
+          <Alert variant="destructive" className="rounded-none border-border bg-card">
+            <Terminal className="h-5 w-5" />
+            <AlertTitle className="text-lg font-bold">No Password Found</AlertTitle>
+            <AlertDescription className="text-muted-foreground">
               Looks like you haven&apos;t added any passwords yet.
             </AlertDescription>
           </Alert>
@@ -57,6 +65,8 @@ const DashboardPage = async ({
               key={index}
               password={collection}
               categories={categories}
+              folders={folders}
+              tags={tags}
             />
           ))
         )}

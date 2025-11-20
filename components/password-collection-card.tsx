@@ -31,15 +31,15 @@ const PasswordCollectionCard = ({
   const decryptPassword = cryptr.decrypt(password.password);
 
   return (
-    <Card>
-      <CardContent className="p-0 px-5">
+    <Card className="rounded-none border-border bg-card transition-colors hover:border-muted-foreground/20">
+      <CardContent className="p-0 px-6">
         <Accordion type="single" collapsible>
           <AccordionItem value="item-1" className="border-none">
-            <AccordionTrigger className="m-0">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg border bg-muted">
+            <AccordionTrigger className="m-0 hover:no-underline">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-none border border-border bg-background">
                   {password.logoUrl ? (
-                    <div className="relative h-6 w-6">
+                    <div className="relative h-7 w-7">
                       <Image
                         src={password.logoUrl}
                         alt={password.websiteName}
@@ -49,25 +49,28 @@ const PasswordCollectionCard = ({
                       />
                     </div>
                   ) : (
-                    <span className="text-lg font-bold uppercase text-muted-foreground">
+                    <span className="text-xl font-bold uppercase text-foreground">
                       {password.websiteName.charAt(0)}
                     </span>
                   )}
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col items-start">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium capitalize">
+                    <span className="text-lg font-bold capitalize tracking-tight text-foreground">
                       {password.websiteName}
                     </span>
                     {password.isFavorite && (
-                      <Star className="ml-2 h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                     )}
                   </div>
+                  <span className="text-sm text-muted-foreground">
+                    {password.email || password.username || "No credentials"}
+                  </span>
                 </div>
               </div>
             </AccordionTrigger>
 
-            <AccordionContent className="space-y-2">
+            <AccordionContent className="space-y-3 pb-4">
               <PasswordContent
                 password={{ ...password, password: decryptPassword }}
               />

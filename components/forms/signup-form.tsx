@@ -37,16 +37,16 @@ const SignUpForm = () => {
   });
 
   const onSubmit = (values: TRegister) => {
-    startTransition(() => {
-      registerAction(values)
-        .then((callback) => {
-          toast.success(`${callback.message}. now you can login`);
-          form.reset();
-          router.push("/sign-in");
-        })
-        .catch((error) => {
-          toast.error(error.message);
-        });
+    startTransition(async () => {
+      const result = await registerAction(values);
+      
+      if (result.success) {
+        toast.success(`${result.message}. Now you can login`);
+        form.reset();
+        router.push("/sign-in");
+      } else {
+        toast.error(result.error);
+      }
     });
   };
 

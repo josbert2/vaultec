@@ -4,9 +4,10 @@ import { Prisma } from "@prisma/client";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { useReducer, useState } from "react";
+import { useReducer } from "react";
 import { maskPassword } from "@/lib/mask-password";
-import { cryptr } from "@/lib/crypto";
+import { usePrivacy } from "@/contexts/privacy-context";
+import { cn } from "@/lib/utils";
 
 interface PasswordContentProps {
   password: Prisma.PasswordGetPayload<{
@@ -21,28 +22,53 @@ const PasswordContent = ({ password }: PasswordContentProps) => {
     (state) => !state,
     true,
   );
+  const { isPrivacyMode } = usePrivacy();
 
   return (
     <div className="space-y-0.5 rounded-lg border p-4">
-      {password.username ? <p>Username: {password.username}</p> : null}
+      {password.username ? (
+        <p>
+          Username:{" "}
+          <span
+            className={cn(
+              "transition-all duration-200",
+              isPrivacyMode && "blur-sm select-none"
+            )}
+          >
+            {password.username}
+          </span>
+        </p>
+      ) : null}
       {password.email ? (
         <p>
           Email:{" "}
           <Link
             href={`mailto:${password?.email}`}
-            className="transition-all duration-300 hover:underline"
+            className={cn(
+              "transition-all duration-300 hover:underline",
+              isPrivacyMode && "blur-sm select-none pointer-events-none"
+            )}
           >
             {password?.email}
           </Link>
         </p>
       ) : null}
       <p className="inline-flex items-center">
-        Password: {!passwordMask ? password.password : maskPassword(8)}
+        Password:{" "}
+        <span
+          className={cn(
+            "transition-all duration-200",
+            isPrivacyMode && "blur-sm select-none"
+          )}
+        >
+          {!passwordMask ? password.password : maskPassword(8)}
+        </span>
         <Button
           variant="ghost"
           size="sm"
           className="ml-0.5"
           onClick={togglePasswordMask}
+          disabled={isPrivacyMode}
         >
           {passwordMask ? (
             <EyeIcon className="h-4 w-4" />
@@ -56,7 +82,10 @@ const PasswordContent = ({ password }: PasswordContentProps) => {
           URL:{" "}
           <Link
             href={password?.url as string}
-            className="transition-all duration-300 hover:underline"
+            className={cn(
+              "transition-all duration-300 hover:underline",
+              isPrivacyMode && "blur-sm select-none pointer-events-none"
+            )}
           >
             {password?.url}
           </Link>
@@ -65,7 +94,12 @@ const PasswordContent = ({ password }: PasswordContentProps) => {
       {password.notes ? (
         <div className="mt-2 border-t pt-2">
           <p className="font-medium">Notes:</p>
-          <p className="whitespace-pre-wrap text-sm text-muted-foreground">
+          <p
+            className={cn(
+              "whitespace-pre-wrap text-sm text-muted-foreground transition-all duration-200",
+              isPrivacyMode && "blur-sm select-none"
+            )}
+          >
             {password.notes}
           </p>
         </div>

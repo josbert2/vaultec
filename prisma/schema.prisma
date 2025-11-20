@@ -48,8 +48,24 @@ model User {
   sessions        Session[]
   passwords       Password[]
   passwordHistory PasswordHistory[]
+  securityAudits  SecurityAudit[]
+  folders         Folder[]
+  tags            Tag[]
+  settings        UserSettings?
 
   @@index([name, email])
+}
+
+model UserSettings {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  autoLogoutEnabled Boolean  @default(true)
+  autoLogoutTimeout Int      @default(900000) // 15 minutes in milliseconds
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model VerificationToken {
@@ -72,26 +88,73 @@ model Category {
   @@index([name, slug])
 }
 
+model Folder {
+  id        String   @id @default(cuid())
+  name      String
+  icon      String?  @default("folder")
+  color     String?  @default("#3b82f6")
+  userId    String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  passwords Password[]
+
+  @@index([userId, order])
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String
+  color     String?  @default("#3b82f6")
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  passwords PasswordTag[]
+
+  @@unique([userId, name])
+  @@index([userId])
+}
+
 model Password {
-  id          String            @id @default(cuid())
+  id          String  @id @default(cuid())
   websiteName String
   email       String?
   username    String?
   password    String
   url         String?
-  notes       String?           @db.Text
+  notes       String? @db.Text
   logoUrl     String?
-  isFavorite  Boolean           @default(false)
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+  isFavorite  Boolean @default(false)
+
+  // Security Audit Fields
+  securityScore   Int?
+  lastChanged     DateTime         @default(now())
+  needsUpdate     Boolean          @default(false)
+  isBreached      Boolean          @default(false)
+  breachCount     Int              @default(0)
+  lastBreachCheck DateTime?
+
+  // Folder relation
+  folderId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   category   Category          @relation(fields: [categoryId], references: [id])
   categoryId String
   user       User              @relation(fields: [userId], references: [id])
   userId     String
+  folder     Folder?           @relation(fields: [folderId], references: [id])
   history    PasswordHistory[]
+  tags       PasswordTag[]
 
   @@index([websiteName])
+  @@index([userId, securityScore])
+  @@index([folderId])
 }
 
 model PasswordHistory {
@@ -110,6 +173,36 @@ model PasswordHistory {
   user     User     @relation(fields: [changedBy], references: [id])
 
   @@index([passwordId, changedAt])
+}
+
+model PasswordTag {
+  id         String   @id @default(cuid())
+  passwordId String
+  tagId      String
+  createdAt  DateTime @default(now())
+
+  password Password @relation(fields: [passwordId], references: [id], onDelete: Cascade)
+  tag      Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([passwordId, tagId])
+  @@index([passwordId])
+  @@index([tagId])
+}
+
+model SecurityAudit {
+  id              String   @id @default(cuid())
+  userId          String
+  overallScore    Int // 0-100
+  totalPasswords  Int
+  weakPasswords   Int
+  duplicates      Int
+  oldPasswords    Int // >90 días
+  strongPasswords Int
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
 }
 
 enum ChangeType {

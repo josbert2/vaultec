@@ -11,11 +11,13 @@ import {
 import { LucideEdit } from "lucide-react";
 import EditPasswordForm from "./forms/edit-password-form";
 import { Button } from "./ui/button";
-import { Category, Prisma } from "@prisma/client";
+import { Category, Prisma, Folder, Tag } from "@prisma/client";
 import { useReducer, useState } from "react";
 
 interface EditPasswordDialogProps {
   categories: Category[];
+  folders: Folder[];
+  tags: Tag[];
   password: Prisma.PasswordGetPayload<{
     include: {
       category: true;
@@ -25,6 +27,8 @@ interface EditPasswordDialogProps {
 
 const EditPasswordDialog = ({
   categories,
+  folders,
+  tags,
   password,
 }: EditPasswordDialogProps) => {
   // const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -48,6 +52,8 @@ const EditPasswordDialog = ({
         <div>
           <EditPasswordForm
             categories={categories}
+            folders={folders}
+            tags={tags}
             password={password}
             toggleIsOpen={toggleIsOpen}
           />
