@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: passweird-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: passweird
+      MYSQL_USER: passweird_user
+      MYSQL_PASSWORD: passweird_password
+    ports:
+      - "3606:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - passweird-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  passweird-network:
+    driver: bridge
