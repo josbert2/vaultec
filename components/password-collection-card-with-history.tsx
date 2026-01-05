@@ -18,6 +18,7 @@ import { Star, Folder, Shield, AlertTriangle, CheckCircle2, Clock } from "lucide
 import { Badge } from "./ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { BreachBadge } from "./breach-badge";
+import { FavoriteButton } from "./favorite-button";
 
 interface PasswordCollectionCardWithHistoryProps {
   categories: Category[];
@@ -95,7 +96,7 @@ const PasswordCollectionCardWithHistory = async ({
                     />
                   )}
                 </div>
-                
+
                 <div className="flex flex-1 flex-col items-start gap-2">
                   <div className="flex w-full items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -106,7 +107,7 @@ const PasswordCollectionCardWithHistory = async ({
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                       )}
                     </div>
-                    
+
                     {/* Security Score */}
                     {password.securityScore !== null && (
                       <div className={`flex items-center gap-1 ${getScoreColor(password.securityScore)}`}>
@@ -124,8 +125,8 @@ const PasswordCollectionCardWithHistory = async ({
 
                     {/* Folder */}
                     {password.folder && (
-                      <Badge 
-                        variant="outline" 
+                      <Badge
+                        variant="outline"
                         className="gap-1 rounded-sm border-border text-xs"
                         style={{ borderColor: password.folder.color || "#3b82f6" }}
                       >
@@ -169,6 +170,11 @@ const PasswordCollectionCardWithHistory = async ({
                 password={{ ...password, password: decryptPassword }}
               />
               <div className="flex items-center space-x-3 px-2">
+                <FavoriteButton
+                  passwordId={password.id}
+                  isFavorite={password.isFavorite}
+                  size="sm"
+                />
                 <DeletePasswordAlertDialog passwordId={password.id} />
                 <EditPasswordDialog
                   categories={categories}

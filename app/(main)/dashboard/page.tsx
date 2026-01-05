@@ -18,11 +18,12 @@ interface DashboarPageProps {
     search?: string;
     folder?: string;
     tag?: string;
+    favorites?: string;
   };
 }
 
 const DashboardPage = async ({
-  searchParams: { category, search, folder, tag },
+  searchParams: { category, search, folder, tag, favorites },
 }: DashboarPageProps) => {
   const [passwordsCollection, categories, total, folders, tags] = await Promise.all([
     getPasswordCollection({
@@ -30,6 +31,7 @@ const DashboardPage = async ({
       search: search as string,
       folder: folder as string,
       tag: tag as string,
+      favorites: favorites as string,
     }),
     getCategories(),
     totalUserPasswordSaved(),
@@ -40,8 +42,8 @@ const DashboardPage = async ({
   return (
     <>
       <Header
-        title="All Passwords"
-        description="Safely manage and access your passwords."
+        title={favorites === "true" ? "Favorite Passwords" : "All Passwords"}
+        description={favorites === "true" ? "Quick access to your starred passwords." : "Safely manage and access your passwords."}
         className="mt-6"
       />
 

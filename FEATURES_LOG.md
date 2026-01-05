@@ -4,7 +4,7 @@
 
 ---
 
-## ✅ FEATURES COMPLETADAS (12)
+## ✅ FEATURES COMPLETADAS (13)
 
 ### 1. Security Audit Dashboard
 - **Estado**: ✅ Completado
@@ -170,35 +170,38 @@
   - Breach badge
   - Last changed date
 
+### 13. Favorites/Starred Passwords
+- **Estado**: ✅ Completado
+- **Archivos**:
+  - `actions/favorite-action.ts`
+  - `components/favorite-button.tsx`
+  - `components/sidebar.tsx` (modificado)
+  - `app/(main)/dashboard/page.tsx` (modificado)
+- **Funcionalidad**:
+  - Toggle favorite button en password cards
+  - Sección "Favorites" en sidebar
+  - Contador de favoritos en sidebar
+  - Filtrado por favoritos en dashboard
+  - URL-based filtering (?favorites=true)
+  - Star icon visual feedback
+
 ---
 
 ## 🚧 FEATURES PENDIENTES
 
 ### 1. Password History Viewer
-- **Prioridad**: Alta (backend ya existe)
-- **Archivos a crear**:
-  - `components/password-history-viewer.tsx`
-  - UI para mostrar historial completo
+- **Prioridad**: Alta (backend ya existe)  
+- **Estado**: ✅ YA IMPLEMENTADO
+- **Archivos**:
+  - `components/password-history-dialog.tsx` ✅
+  - `actions/password-history-action.ts` ✅
 - **Funcionalidad**:
-  - Ver todos los cambios históricos
-  - Comparar versiones
-  - Restaurar password anterior
-  - Timeline visual
-- **Estimación**: 3-4 horas
+  - Ver todos los cambios históricos ✅
+  - Restaurar password anterior ✅
+  - Timeline visual ✅
+  - Badges de tipo (Created/Updated/Restored) ✅
 
-### 2. Favorites/Starred Passwords
-- **Prioridad**: Media
-- **Archivos a crear**:
-  - Modificar `components/password-collection-card-with-history.tsx`
-  - Agregar sección en sidebar
-- **Funcionalidad**:
-  - Toggle star en password cards
-  - Sección "Favorites" en sidebar
-  - Filtro rápido
-- **Estimación**: 2 horas
-- **Nota**: Campo `isFavorite` ya existe en DB
-
-### 3. Búsqueda Avanzada
+### 2. Búsqueda Avanzada
 - **Prioridad**: Media
 - **Archivos a crear**:
   - `components/advanced-search.tsx`
@@ -210,7 +213,7 @@
   - Resultados destacados
 - **Estimación**: 4-5 horas
 
-### 4. 2FA/TOTP Generator
+### 3. 2FA/TOTP Generator
 - **Prioridad**: Alta (feature premium)
 - **Archivos a crear**:
   - `lib/totp-generator.ts`
@@ -225,7 +228,7 @@
 - **Estimación**: 1-2 semanas
 - **Dependencias**: `otplib`, `qrcode`
 
-### 5. Security Audit + Breach Integration
+### 4. Security Audit + Breach Integration
 - **Prioridad**: Media
 - **Archivos a modificar**:
   - `actions/security-audit-action.ts`
@@ -236,7 +239,7 @@
   - Mostrar breach count en stats
 - **Estimación**: 2-3 horas
 
-### 6. Secure Notes
+### 5. Secure Notes
 - **Prioridad**: Baja
 - **Archivos a crear**:
   - `prisma/schema.prisma` (Note model)
@@ -250,7 +253,7 @@
   - Búsqueda
 - **Estimación**: 4-5 horas
 
-### 7. Password Sharing
+### 6. Password Sharing
 - **Prioridad**: Baja (complejo)
 - **Archivos a crear**:
   - `prisma/schema.prisma` (SharedPassword model)
@@ -263,7 +266,7 @@
   - Revocación
 - **Estimación**: 1-2 semanas
 
-### 8. Browser Extension
+### 7. Browser Extension
 - **Prioridad**: Baja (proyecto separado)
 - **Archivos a crear**:
   - Proyecto separado en `/extension`
@@ -277,7 +280,7 @@
   - Sync con app
 - **Estimación**: 3-4 semanas
 
-### 9. Dark/Light Mode Toggle Manual
+### 8. Dark/Light Mode Toggle Manual
 - **Prioridad**: Baja (ya existe ThemeSwitcher)
 - **Archivos a modificar**:
   - `components/theme-switcher.tsx`
@@ -288,7 +291,7 @@
   - Smooth transition
 - **Estimación**: 1 hora
 
-### 10. Breach Detection - Auto Scan
+### 9. Breach Detection - Auto Scan
 - **Prioridad**: Media
 - **Archivos a modificar**:
   - `actions/breach-action.ts`
@@ -304,7 +307,7 @@
 
 ## 📊 RESUMEN
 
-### Completadas: 12 features
+### Completadas: 13 features
 - Security Audit Dashboard ✅
 - Folders/Workspaces ✅
 - Tags System ✅
@@ -317,10 +320,9 @@
 - Password Generator ✅
 - Breach Detection ✅
 - Password Card UI ✅
+- Favorites/Starred ✅
 
-### Pendientes: 10 features
-- Password History Viewer (Alta prioridad)
-- Favorites/Starred (Media prioridad)
+### Pendientes: 8 features
 - Búsqueda Avanzada (Media prioridad)
 - 2FA/TOTP Generator (Alta prioridad)
 - Security Audit + Breach (Media prioridad)
@@ -334,22 +336,12 @@
 
 ## 🎯 PRÓXIMOS PASOS RECOMENDADOS
 
-1. **Password History Viewer** (3-4h)
-   - Backend ya existe
-   - Solo falta UI
-   - Alto valor, bajo esfuerzo
-
-2. **Favorites/Starred** (2h)
-   - Campo DB ya existe
-   - Muy útil para usuarios
-   - Rápido de implementar
-
-3. **Security Audit + Breach Integration** (2-3h)
+1. **Security Audit + Breach Integration** (2-3h)
    - Complementa breach detection
    - Mejora security score
    - Valor inmediato
 
-4. **2FA/TOTP Generator** (1-2 semanas)
+2. **2FA/TOTP Generator** (1-2 semanas)
    - Feature premium diferenciadora
    - Requiere más tiempo
    - Alto valor para usuarios avanzados

@@ -16,6 +16,7 @@ export const getPasswordCollection = async (param?: {
   search?: string;
   folder?: string;
   tag?: string;
+  favorites?: string;
 }) => {
   try {
     const currentUser = await getCurrentUser();
@@ -46,6 +47,10 @@ export const getPasswordCollection = async (param?: {
           tagId: param.tag,
         },
       };
+    }
+
+    if (param?.favorites === "true") {
+      whereClause.isFavorite = true;
     }
 
     const passwordCollection = await prisma.password.findMany({

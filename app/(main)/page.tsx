@@ -11,8 +11,10 @@ import AsciiVariantSelector from "@/components/landing/ascii-variant-selector";
 import CtaSection from "@/components/landing/cta-section";
 import Footer from "@/components/landing/footer";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight, Lock } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import { Logo } from "@/components/logo";
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 
 export default function LandingPage() {
   const [variant, setVariant] = useState("pattern");
@@ -29,13 +31,10 @@ export default function LandingPage() {
       </div>
       <div className="relative z-20">
         <AsciiVariantSelector currentVariant={variant} onSelect={setVariant} />
-        {/* Navbar */}
         <nav className="fixed top-0 z-50 flex w-full items-center justify-between px-6 py-6 md:px-12">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-black">
-              <Lock className="h-4 w-4" />
-            </div>
-            <span className="text-lg font-bold tracking-tight">Passweird</span>
+            <Logo size={51} />
+            <span className="text-lg font-bold tracking-tight ml-2">Vaultec</span>
           </div>
 
           <div className="hidden items-center gap-8 text-sm font-medium text-zinc-400 md:flex">
@@ -79,7 +78,12 @@ export default function LandingPage() {
               </div>
 
               <h2 className="text-right text-6xl font-bold tracking-tighter md:text-8xl lg:text-[10rem] leading-[0.9]">
-                IN SECONDS
+                <AnimatedShinyText
+                  className="text-6xl font-bold tracking-tighter md:text-8xl lg:text-[10rem] text-white"
+                  shimmerWidth={200}
+                >
+                  IN SECONDS
+                </AnimatedShinyText>
               </h2>
             </div>
 
@@ -90,7 +94,7 @@ export default function LandingPage() {
                   <ArrowUpRight className="ml-2 h-5 w-5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </Link>
               </Button>
-             
+
             </div>
           </div>
         </div>
